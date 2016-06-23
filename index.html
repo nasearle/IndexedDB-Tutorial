@@ -17,6 +17,12 @@
 <textarea id="note"></textarea>
 <button id="addNote">Add Note</button>
 
+<h2>Get Person</h2>
+<input type="text" id="getemail"> <button id="getPerson">Get Person</button>
+
+<h2>Get Note</h2>
+<input type="text" id="getnote"> <button id="getNote">Get Note</button><!doctype html>
+
 <script>
 function idbOK() {
 	return "indexedDB" in window;
@@ -34,6 +40,8 @@ $(document).ready(function() {
 	//Start listening for button clicks
 	$("#addPerson").on("click", addPerson);
 	$("#addNote").on("click", addNote);
+	$("#getPerson").on("click", getPerson);
+	$("#getNote").on("click", getNote);
 });
 
 function addPerson() {
@@ -79,6 +87,30 @@ function addNote(e) {
 		return tx.complete;
 	}).then(function() {
 		console.log("added note to notes os!");
+	});
+}
+
+function getPerson() {
+	var key = $("#getemail").val();
+	if(key === "") return;
+	dbPromise.then(function(db) {
+		var tx = db.transaction(["people"],"readonly");
+		var store = tx.objectStore("people");
+		return store.get(key);
+	}).then(function(val) {
+		console.dir(val);
+	});
+}
+
+function getNote() {
+	var key = $("#getnote").val();
+	if(key === "") return;
+	dbPromise.then(function(db) {
+		var tx = db.transaction(["notes"],"readonly");
+		var store = tx.objectStore("notes");
+		return store.get(Number(key));
+	}).then(function(val) {
+		console.dir(val);
 	});
 }
 </script>
