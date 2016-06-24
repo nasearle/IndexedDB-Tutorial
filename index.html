@@ -17,10 +17,7 @@ $(document).ready(function() {
 	if(!idbOK()) return;
 
   dbPromise = idb.open('test-db1', 1);
-
-	dbPromise.then(function () {
-		console.log('created a new database!')
-	});
+	
 });
 
 </script>
