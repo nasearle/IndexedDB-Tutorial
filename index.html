@@ -7,88 +7,34 @@
 </head>
 
 <body>
-
-<h2>Add Person</h2>
-<input type="text" id="name" placeholder="Name"><br/>
-<input type="email" id="email" placeholder="Email"><br/>
-<button id="addPerson">Add Person</button>
-
-<h2>Add Note</h2>
-<textarea id="note"></textarea>
-<button id="addNote">Add Note</button>
-
 <h2>Get Person</h2>
 <input type="text" id="getemail"> <button id="getPerson">Get Person</button>
+<p/>
 
-<h2>Get Note</h2>
-<input type="text" id="getnote"> <button id="getNote">Get Note</button><!doctype html>
+<input type="text" id="name" placeholder="Name"><br/>
+<input type="email" id="email" placeholder="Email"><br/>
+<input type="hidden" id="created">
+<button id="updatePerson">Update Person</button>
 
 <script>
 function idbOK() {
 	return "indexedDB" in window;
 }
-var db;
+
 $(document).ready(function() {
 
 	//No support? Go in the corner and pout.
 	if(!idbOK()) return;
-	dbPromise = idb.open("testdb5", 1, function(upgradeDB) {
+	dbPromise = idb.open("test-db5", 1, function(upgradeDB) {
 		var peopleOS = upgradeDB.createObjectStore("people", {keyPath: "email"});
 		var notesOS = upgradeDB.createObjectStore("notes", {autoIncrement:true});
 	});
 
 	//Start listening for button clicks
-	$("#addPerson").on("click", addPerson);
-	$("#addNote").on("click", addNote);
 	$("#getPerson").on("click", getPerson);
-	$("#getNote").on("click", getNote);
+	$("#updatePerson").on("click", updatePerson);
+
 });
-
-function addPerson() {
-	var name = $("#name").val();
-	var email = $("#email").val();
-	console.log("About to add "+name+"/"+email);
-	//Get a transaction
-	//default for OS list is all, default for type is read
-	dbPromise.then(function(db) {
-		var tx = db.transaction(["people"],"readwrite");
-		//Ask for the objectStore
-		var store = tx.objectStore("people");
-		//Define a person
-		var person = {
-			name:name,
-			email:email,
-			created:new Date().getTime()
-		}
-		//Perform the add
-		store.add(person);
-		return tx.complete;
-	}).then(function() {
-		console.log("added person to the people os!");
-	});
-}
-
-function addNote(e) {
-	var note = $("#note").val();
-	console.log("About to add "+note);
-	//Get a transaction
-	//default for OS list is all, default for type is read
-	dbPromise.then(function(db) {
-		var tx = db.transaction(["notes"],"readwrite");
-		//Ask for the objectStore
-		var store = tx.objectStore("notes");
-		//Define a note
-		var note = {
-			text:note,
-			created:new Date().getTime()
-		}
-		//Perform the add
-		store.add(note);
-		return tx.complete;
-	}).then(function() {
-		console.log("added note to notes os!");
-	});
-}
 
 function getPerson() {
 	var key = $("#getemail").val();
@@ -99,18 +45,33 @@ function getPerson() {
 		return store.get(key);
 	}).then(function(val) {
 		console.dir(val);
+		$("#name").val(val.name);
+		$("#email").val(val.email);
+		$("#created").val(val.created);
 	});
 }
 
-function getNote() {
-	var key = $("#getnote").val();
-	if(key === "") return;
+function updatePerson(e) {
+	var name = $("#name").val();
+	var email = $("#email").val();
+	var created = $("#created").val();
+	console.log("About to update "+name+"/"+email);
+	//Get a transaction
+	//default for OS list is all, default for type is read
 	dbPromise.then(function(db) {
-		var tx = db.transaction(["notes"],"readonly");
-		var store = tx.objectStore("notes");
-		return store.get(Number(key));
-	}).then(function(val) {
-		console.dir(val);
+		var tx = db.transaction(["people"],"readwrite");
+		//Ask for the objectStore
+		var store = tx.objectStore("people");
+		var person = {
+			name:name,
+			email:email,
+			created:created
+		}
+		//Perform the update
+		store.put(person);
+		return tx.complete;
+	}).then(function() {
+		console.log('person updated!');
 	});
 }
 </script>
