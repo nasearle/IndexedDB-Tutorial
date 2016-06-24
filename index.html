@@ -5,26 +5,26 @@
 	"http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <script type="text/javascript" src="idb.js"></script>
 </head>
-
 <body>
+<script>
 
-	<script>
-	function idbOK() {
-		return "indexedDB" in window;
-	}
+function idbOK() {
+	return "indexedDB" in window;
+}
 
-	$(document).ready(function() {
-		if(!idbOK()) return;
+$(document).ready(function() {
+	if(!idbOK()) return;
 
-		var dbPromise = idb.open("test-db4", 1, function(upgradeDb) {
-			var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
-			var notesOS = upgradeDb.createObjectStore("notes", {autoIncrement:true});
-			var logsOS = upgradeDb.createObjectStore("logs", {keyPath:"id", autoIncrement:true});
-			peopleOS.createIndex("gender", "gender", {unique:false});
-			peopleOS.createIndex("ssn", "ssn", {unique:true});
-			notesOS.createIndex("title", "title", {unique:false});
-		});
+	var dbPromise = idb.open("test-db4", 1, function(upgradeDb) {
+		var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
+		var notesOS = upgradeDb.createObjectStore("notes", {autoIncrement:true});
+		var logsOS = upgradeDb.createObjectStore("logs", {keyPath:"id", autoIncrement:true});
+		peopleOS.createIndex("gender", "gender", {unique:false});
+		peopleOS.createIndex("ssn", "ssn", {unique:true});
+		notesOS.createIndex("title", "title", {unique:false});
 	});
-	</script>
+});
+
+</script>
 </body>
 </html>
