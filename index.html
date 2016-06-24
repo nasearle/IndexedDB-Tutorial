@@ -5,24 +5,25 @@
 	"http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <script type="text/javascript" src="idb.js"></script>
 </head>
-
 <body>
+<script>
 
-	<script>
-	function idbOK() {
-		return "indexedDB" in window;
-	}
-	var db;
-	$(document).ready(function() {
+function idbOK() {
+	return "indexedDB" in window;
+}
 
-		//No support? Go in the corner and pout.
-		if(!idbOK()) return;
-		var dbPromise = idb.open("test-db3", 1, function(upgradeDb) {
-			upgradeDb.createObjectStore("people", {keyPath: "email"});
-			upgradeDb.createObjectStore("notes", {autoIncrement:true});
-			upgradeDb.createObjectStore("logs", {keyPath:"id", autoIncrement:true});
-		});
+$(document).ready(function() {
+	// check for support
+	if(!idbOK()) return;
+
+	var dbPromise = idb.open("test-db3", 1, function(upgradeDb) {
+		console.log('Creating object stores');
+		upgradeDb.createObjectStore("people", {keyPath: "email"});
+		upgradeDb.createObjectStore("notes", {autoIncrement:true});
+		upgradeDb.createObjectStore("logs", {keyPath:"id", autoIncrement:true});
 	});
-	</script>
+});
+
+</script>
 </body>
 </html>
