@@ -12,11 +12,10 @@
 	function idbOK() {
 		return "indexedDB" in window;
 	}
-	var db;
-	$(document).ready(function() {
 
-		//No support? Go in the corner and pout.
+	$(document).ready(function() {
 		if(!idbOK()) return;
+
 		var dbPromise = idb.open("test-db4", 1, function(upgradeDb) {
 			var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
 			var notesOS = upgradeDb.createObjectStore("notes", {autoIncrement:true});
