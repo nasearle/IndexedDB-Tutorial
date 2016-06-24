@@ -7,14 +7,9 @@
 </head>
 
 <body>
-<h2>Get Person</h2>
-<input type="text" id="getemail"> <button id="getPerson">Get Person</button>
-<p/>
 
-<input type="text" id="name" placeholder="Name"><br/>
-<input type="email" id="email" placeholder="Email"><br/>
-<input type="hidden" id="created">
-<button id="updatePerson">Update Person</button>
+<h2>Delete Person</h2>
+<input type="text" id="email"> <button id="deletePerson">Delete Person</button>
 
 <script>
 function idbOK() {
@@ -31,9 +26,7 @@ $(document).ready(function() {
 	});
 
 	//Start listening for button clicks
-	$("#getPerson").on("click", getPerson);
-	$("#updatePerson").on("click", updatePerson);
-
+	$("#deletePerson").on("click", deletePerson);
 });
 
 function getPerson() {
@@ -51,27 +44,16 @@ function getPerson() {
 	});
 }
 
-function updatePerson(e) {
-	var name = $("#name").val();
-	var email = $("#email").val();
-	var created = $("#created").val();
-	console.log("About to update "+name+"/"+email);
-	//Get a transaction
-	//default for OS list is all, default for type is read
+function deletePerson(e) {
+	var key = $("#email").val();
+	if(key === "") return;
 	dbPromise.then(function(db) {
 		var tx = db.transaction(["people"],"readwrite");
-		//Ask for the objectStore
 		var store = tx.objectStore("people");
-		var person = {
-			name:name,
-			email:email,
-			created:created
-		}
-		//Perform the update
-		store.put(person);
+		store.delete(key);
 		return tx.complete;
 	}).then(function() {
-		console.log('person updated!');
+		console.log("Person deleted");
 	});
 }
 </script>
