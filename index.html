@@ -12,13 +12,16 @@
 function idbOK() {
 	return "indexedDB" in window;
 }
-var db;
 
 $(document).ready(function() {
-  //No support? Go in the corner and pout.
+  //check for support
 	if(!idbOK()) return;
 
-  idb.open('test-db1', 1);
+  dbPromise = idb.open('test-db1', 1);
+
+	dbPromise.then(function () {
+		console.log('created a new database!')
+	});
 });
 </script>
 </body>
