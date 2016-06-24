@@ -21,11 +21,10 @@
 function idbOK() {
 	return "indexedDB" in window;
 }
-var db;
-$(document).ready(function() {
 
-	//No support? Go in the corner and pout.
+$(document).ready(function() {
 	if(!idbOK()) return;
+	
 	dbPromise = idb.open("testdb5", 1, function(upgradeDB) {
 		var peopleOS = upgradeDB.createObjectStore("people", {keyPath: "email"});
 		var notesOS = upgradeDB.createObjectStore("notes", {autoIncrement:true});
