@@ -18,8 +18,10 @@ $(document).ready(function() {
 	if(!idbOK()) return;
 
   dbPromise = idb.open('test-db2', 1, function(upgradeDb) {
-		console.log('making a new object store')
-		upgradeDb.createObjectStore('firstOS');
+		console.log("making a new object store")
+		if (!upgradeDb.objectStoreNames.contains("firstOS")) {
+			upgradeDb.createObjectStore("firstOS");
+		}
 	});
 });
 </script>
