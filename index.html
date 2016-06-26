@@ -42,6 +42,7 @@ $(document).ready(function() {
 function getPerson() {
 	var key = $("#getemail").val();
 	if(key === "") return;
+
 	dbPromise.then(function(db) {
 		var tx = db.transaction(["people"],"readonly");
 		var store = tx.objectStore("people");
@@ -54,16 +55,14 @@ function getPerson() {
 	});
 }
 
-function updatePerson(e) {
+function updatePerson() {
 	var name = $("#name").val();
 	var email = $("#email").val();
 	var created = $("#created").val();
 	console.log("About to update "+name+"/"+email);
-	//Get a transaction
-	//default for OS list is all, default for type is read
+
 	dbPromise.then(function(db) {
 		var tx = db.transaction(["people"],"readwrite");
-		//Ask for the objectStore
 		var store = tx.objectStore("people");
 		var person = {
 			name:name,
