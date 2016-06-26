@@ -48,7 +48,7 @@ function getPerson() {
 	});
 }
 
-function deletePerson(e) {
+function deletePerson() {
 	var key = $("#email").val();
 	if(key === "") return;
 	dbPromise.then(function(db) {
