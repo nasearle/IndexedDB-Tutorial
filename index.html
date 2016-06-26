@@ -18,13 +18,13 @@ $(document).ready(function() {
 
 	var dbPromise = idb.open("test-db3", 1, function(upgradeDb) {
 		console.log('Creating object stores');
-		if (!upgradeDB.objectStoreNames.contains("people")) {
+		if (!upgradeDb.objectStoreNames.contains("people")) {
 			upgradeDb.createObjectStore("people", {keyPath: "email"});
 		}
-		if (!upgradeDB.objectStoreNames.contains("notes")) {
+		if (!upgradeDb.objectStoreNames.contains("notes")) {
 			upgradeDb.createObjectStore("notes", {autoIncrement:true});
 		}
-		if (!upgradeDB.objectStoreNames.contains("logs")) {
+		if (!upgradeDb.objectStoreNames.contains("logs")) {
 			upgradeDb.createObjectStore("logs", {keyPath:"id", autoIncrement:true});
 		}
 	});
