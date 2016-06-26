@@ -16,12 +16,18 @@ $(document).ready(function() {
 	if(!idbOK()) return;
 
 	var dbPromise = idb.open("test-db4", 1, function(upgradeDb) {
-		var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
-		var notesOS = upgradeDb.createObjectStore("notes", {autoIncrement:true});
-		var logsOS = upgradeDb.createObjectStore("logs", {keyPath:"id", autoIncrement:true});
-		peopleOS.createIndex("gender", "gender", {unique:false});
-		peopleOS.createIndex("ssn", "ssn", {unique:true});
-		notesOS.createIndex("title", "title", {unique:false});
+		if (!upgradeDB.objectStoreNames.contains("people")) {
+			var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
+			peopleOS.createIndex("gender", "gender", {unique:false});
+			peopleOS.createIndex("ssn", "ssn", {unique:true});
+		}
+		if (!upgradeDB.objectStoreNames.contains("notes")) {
+			var notesOS = upgradeDb.createObjectStore("notes", {autoIncrement:true});
+			notesOS.createIndex("title", "title", {unique:false});
+		}
+		if (!upgradeDB.objectStoreNames.contains("logs")) {
+			var logsOS = upgradeDb.createObjectStore("logs", {keyPath:"id", autoIncrement:true});
+		}
 	});
 });
 
