@@ -31,12 +31,12 @@ function idbOK() {
 $(document).ready(function() {
 	if(!idbOK()) return;
 
-	dbPromise = idb.open("test-db5", 1, function(upgradeDB) {
-		if (!upgradeDB.objectStoreNames.contains("people")) {
-			var peopleOS = upgradeDB.createObjectStore("people", {keyPath: "email"});
+	dbPromise = idb.open("test-db5", 1, function(upgradeDb) {
+		if (!upgradeDb.objectStoreNames.contains("people")) {
+			var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
 		}
-		if (!upgradeDB.objectStoreNames.contains("notes")) {
-			var notesOS = upgradeDB.createObjectStore("notes", {autoIncrement:true});
+		if (!upgradeDb.objectStoreNames.contains("notes")) {
+			var notesOS = upgradeDb.createObjectStore("notes", {autoIncrement:true});
 		}
 	});
 
