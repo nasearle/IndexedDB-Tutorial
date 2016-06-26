@@ -31,7 +31,7 @@ var db;
 $(document).ready(function() {
 	if(!idbOK()) return;
 
-	dbPromise = idb.open("testd-b5", 1, function(upgradeDB) {
+	dbPromise = idb.open("test-db5", 1, function(upgradeDB) {
 		if (!upgradeDB.objectStoreNames.contains('people')) {
 			var peopleOS = upgradeDB.createObjectStore('people', {keyPath: "email"});
 		}
