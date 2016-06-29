@@ -56,7 +56,7 @@ function addPerson() {
 
 function getPeople() {
 	dbPromise.then(function(db) {
-		var tx = db.transaction(["people"], "readwrite");
+		var tx = db.transaction(["people"], "readonly");
 		var people = tx.objectStore("people");
 		var nameIndex = people.index("name");
 		return nameIndex.getAll();
