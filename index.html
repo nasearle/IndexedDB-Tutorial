@@ -13,8 +13,7 @@
 <input type="email" id="email" placeholder="Email"><br/>
 <button id="addPerson">Add Person</button>
 <p/>
-<button id="showAll">Show All</button>
-<div id="results"></div>
+<button id="getAll">Get All</button>
 
 <script>
 function idbOK() {
@@ -24,19 +23,15 @@ function idbOK() {
 $(document).ready(function() {
 	if(!idbOK()) return;
 
-	dbPromise = idb.open("test-db5", 1, function(upgradeDb) {
+	dbPromise = idb.open("test-db6", 1, function(upgradeDb) {
 		if (!upgradeDb.objectStoreNames.contains("people")) {
 			var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
 			peopleOS.createIndex('name', 'name');
 		}
-		if (!upgradeDb.objectStoreNames.contains("notes")) {
-			var notesOS = upgradeDb.createObjectStore("notes", {autoIncrement:true});
-		}
-
 	});
 
 	$("#addPerson").on("click", addPerson);
-	$("#showAll").on("click", getPeople);
+	$("#getAll").on("click", getPeople);
 });
 
 function addPerson() {
@@ -60,28 +55,13 @@ function addPerson() {
 }
 
 function getPeople() {
-	var s = "";
-
 	dbPromise.then(function(db) {
 		var tx = db.transaction(["people"], "readwrite");
 		var people = tx.objectStore("people");
-		return people.openCursor();
-	}).then(function logPerson(cursor) {
-	  if (!cursor) return;
-	  console.log("Cursored at:", cursor.value.name);
-
-		s += "<h2>Key "+cursor.key+"</h2><p>";
-		for(var field in cursor.value) {
-			s+= field+"="+cursor.value[field]+"<br/>";
-		}
-		s+="</p>";
-		// we could also do things like:
-	  // cursor.update(newValue) to change the value, or
-	  // cursor.delete() to delete this entry
-	  return cursor.continue().then(logPerson);
-	}).then(function() {
-	  console.log('Done cursoring');
-		$("#results").html(s);
+		var nameIndex = people.index("name");
+		return nameIndex.getAll();
+	}).then(function(people) {
+	  console.log('People by name:', people);
 	});
 }
 </script>
