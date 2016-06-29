@@ -12,16 +12,9 @@
 <input type="text" id="name" placeholder="Name"><br/>
 <input type="email" id="email" placeholder="Email"><br/>
 <button id="addPerson">Add Person</button>
-
-<h2>Add Note</h2>
-<textarea id="note"></textarea>
-<button id="addNote">Add Note</button>
-
-<h2>Get Person</h2>
-<input type="text" id="getemail"> <button id="getPerson">Get Person</button>
-
-<h2>Get Note</h2>
-<input type="text" id="getnote"> <button id="getNote">Get Note</button><!doctype html>
+<p/>
+<button id="showAll">Show All</button>
+<div id="results"></div>
 
 <script>
 function idbOK() {
@@ -34,17 +27,16 @@ $(document).ready(function() {
 	dbPromise = idb.open("test-db5", 1, function(upgradeDb) {
 		if (!upgradeDb.objectStoreNames.contains("people")) {
 			var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
+			peopleOS.createIndex('name', 'name');
 		}
 		if (!upgradeDb.objectStoreNames.contains("notes")) {
 			var notesOS = upgradeDb.createObjectStore("notes", {autoIncrement:true});
 		}
+
 	});
 
-	//Start listening for button clicks
 	$("#addPerson").on("click", addPerson);
-	$("#addNote").on("click", addNote);
-	$("#getPerson").on("click", getPerson);
-	$("#getNote").on("click", getNote);
+	$("#showAll").on("click", getPeople);
 });
 
 function addPerson() {
@@ -53,18 +45,13 @@ function addPerson() {
 	console.log("About to add "+name+"/"+email);
 
 	dbPromise.then(function(db) {
-		//Get a transaction
-		//default for OS list is all, default for type is read
 		var tx = db.transaction(["people"],"readwrite");
-		//open the objectStore on the transaction object
 		var store = tx.objectStore("people");
-		//Define a person
 		var person = {
 			name:name,
 			email:email,
 			created:new Date().getTime()
 		}
-		//Perform the add
 		store.add(person);
 		return tx.complete;
 	}).then(function() {
@@ -72,50 +59,29 @@ function addPerson() {
 	});
 }
 
-function addNote(e) {
-	var note = $("#note").val();
-	console.log("About to add "+note);
+function getPeople() {
+	var s = "";
 
 	dbPromise.then(function(db) {
-		//Get a transaction
-		//default for OS list is all, default for type is read
-		var tx = db.transaction(["notes"],"readwrite");
-		//open the objectStore on the transaction object
-		var store = tx.objectStore("notes");
-		//Define a note
-		var note = {
-			text:note,
-			created:new Date().getTime()
+		var tx = db.transaction(["people"], "readwrite");
+		var people = tx.objectStore("people");
+		return people.openCursor();
+	}).then(function logPerson(cursor) {
+	  if (!cursor) return;
+	  console.log("Cursored at:", cursor.value.name);
+
+		s += "<h2>Key "+cursor.key+"</h2><p>";
+		for(var field in cursor.value) {
+			s+= field+"="+cursor.value[field]+"<br/>";
 		}
-		//Perform the add
-		store.add(note);
-		return tx.complete;
+		s+="</p>";
+		// we could also do things like:
+	  // cursor.update(newValue) to change the value, or
+	  // cursor.delete() to delete this entry
+	  return cursor.continue().then(logPerson);
 	}).then(function() {
-		console.log("added note to notes os!");
-	});
-}
-
-function getPerson() {
-	var key = $("#getemail").val();
-	if(key === "") return;
-	dbPromise.then(function(db) {
-		var tx = db.transaction(["people"],"readonly");
-		var store = tx.objectStore("people");
-		return store.get(key);
-	}).then(function(val) {
-		console.dir(val);
-	});
-}
-
-function getNote() {
-	var key = $("#getnote").val();
-	if(key === "") return;
-	dbPromise.then(function(db) {
-		var tx = db.transaction(["notes"],"readonly");
-		var store = tx.objectStore("notes");
-		return store.get(Number(key));
-	}).then(function(val) {
-		console.dir(val);
+	  console.log('Done cursoring');
+		$("#results").html(s);
 	});
 }
 </script>
