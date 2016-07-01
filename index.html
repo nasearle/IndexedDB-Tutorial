@@ -26,7 +26,6 @@ $(document).ready(function() {
 	dbPromise = idb.open("test-db6", 1, function(upgradeDb) {
 		if (!upgradeDb.objectStoreNames.contains("people")) {
 			var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
-			peopleOS.createIndex('name', 'name');
 		}
 	});
 
@@ -58,8 +57,7 @@ function getPeople() {
 	dbPromise.then(function(db) {
 		var tx = db.transaction(["people"], "readonly");
 		var people = tx.objectStore("people");
-		var nameIndex = people.index("name");
-		return nameIndex.getAll();
+		return people.getAll();
 	}).then(function(people) {
 	  console.log('People by name:', people);
 	});
