@@ -14,13 +14,6 @@
 <button id="addPerson">Add Person</button>
 <p/>
 
-<h2>Search People</h2>
-Starting with: <input type="text" id="lower"><br/>
-Ending with: <input type="text" id="upper"><br/>
-<button id="search">Search</button>
-
-<div id="results"></div>
-
 <script>
 function idbOK() {
 	return "indexedDB" in window;
@@ -36,8 +29,17 @@ $(document).ready(function() {
 		}
 	});
 
+	var dbPromise = idb.open('test-db', 3, function(upgradeDb) {
+  switch(upgradeDb.oldVersion) {
+    case 0:
+      upgradeDb.createObjectStore('people', { keyPath: "email" });
+    case 1:
+      var peopleStore = upgradeDb.transaction.objectStore('people');
+      peopleStore.createIndex('name', 'name');
+  }
+});
+
 	$("#addPerson").on("click", addPerson);
-	$("#search").on("click", searchPeople);
 });
 
 function addPerson() {
@@ -57,44 +59,6 @@ function addPerson() {
 		return tx.complete;
 	}).then(function() {
 		console.log("added person to the people os!");
-	});
-}
-
-function searchPeople() {
-	var lower = $("#lower").val();
-	var upper = $("#upper").val();
-	if(lower == "" && upper == "") return;
-
-	var range;
-	if(lower != "" && upper != "") {
-		range = IDBKeyRange.bound(lower, upper);
-	} else if(lower == "") {
-		range = IDBKeyRange.upperBound(upper);
-	} else {
-		range = IDBKeyRange.lowerBound(lower);
-	}
-	var s = "";
-
-	dbPromise.then(function(db) {
-		var tx = db.transaction(["people"], "readonly");
-		var store = tx.objectStore("people");
-		var index = store.index("name");
-		return index.openCursor(range);
-	}).then(function showRange(cursor) {
-		if (!cursor) return;
-		console.log("Cursored at:", cursor.value.name);
-
-		s += "<h2>Key "+cursor.key+"</h2><p>";
-		for(var field in cursor.value) {
-			s+= field+"="+cursor.value[field]+"<br/>";
-		}
-		s+="</p>";
-
-		return cursor.continue().then(showRange)
-	}).then(function() {
-	  console.log('Done cursoring');
-		if(s === "") s = "<p>No results.</p>";
-		$("#results").html(s);
 	});
 }
 </script>
