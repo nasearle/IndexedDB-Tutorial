@@ -64,6 +64,9 @@ function getPeople() {
 		return people.openCursor();
 	}).then(function logPerson(cursor) {
 	  if (!cursor) return;
+
+		// TODO 1 Use cursor.update to change all of the names to "Bob"
+
 	  console.log("Cursored at:", cursor.value.name);
 
 		s += "<h2>Key "+cursor.key+"</h2><p>";
@@ -71,9 +74,7 @@ function getPeople() {
 			s+= field+"="+cursor.value[field]+"<br/>";
 		}
 		s+="</p>";
-		// we could also do things like:
-	  // cursor.update(newValue) to change the value, or
-	  // cursor.delete() to delete this entry
+		
 	  return cursor.continue().then(logPerson);
 	}).then(function() {
 	  console.log('Done cursoring');
