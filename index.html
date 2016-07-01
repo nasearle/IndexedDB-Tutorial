@@ -46,7 +46,7 @@ function addPerson() {
 	console.log("About to add "+name+"/"+email);
 
 	dbPromise.then(function(db) {
-		var tx = db.transaction(["people"],"readwrite");
+		var tx = db.transaction(["people"], "readwrite");
 		var store = tx.objectStore("people");
 		var person = {
 			name:name,
@@ -76,7 +76,7 @@ function searchPeople() {
 	var s = "";
 
 	dbPromise.then(function(db) {
-		var tx = db.transaction(["people"],"readonly");
+		var tx = db.transaction(["people"], "readonly");
 		var store = tx.objectStore("people");
 		var index = store.index("name");
 		return index.openCursor(range);
