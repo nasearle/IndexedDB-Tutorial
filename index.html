@@ -27,7 +27,6 @@ $(document).ready(function() {
 	dbPromise = idb.open("test-db6", 1, function(upgradeDb) {
 		if (!upgradeDb.objectStoreNames.contains("people")) {
 			var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
-			peopleOS.createIndex('name', 'name');
 		}
 	});
 
@@ -74,7 +73,7 @@ function getPeople() {
 			s+= field+"="+cursor.value[field]+"<br/>";
 		}
 		s+="</p>";
-		
+
 	  return cursor.continue().then(logPerson);
 	}).then(function() {
 	  console.log('Done cursoring');
