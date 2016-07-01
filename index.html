@@ -29,7 +29,7 @@ function idbOK() {
 $(document).ready(function() {
 	if(!idbOK()) return;
 
-	dbPromise = idb.open("test-db7", 1, function(upgradeDb) {
+	dbPromise = idb.open("test-db6", 1, function(upgradeDb) {
 		if (!upgradeDb.objectStoreNames.contains("people")) {
 			var peopleOS = upgradeDb.createObjectStore("people", {keyPath: "email"});
 			peopleOS.createIndex('name', 'name');
