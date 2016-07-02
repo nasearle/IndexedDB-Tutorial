@@ -11,7 +11,6 @@
 <h2>Add Person</h2>
 <input type="text" id="name" placeholder="Name"><br/>
 <input type="email" id="email" placeholder="Email"><br/>
-<input type="text" id="age" placeholder="Age"><br/>
 <input type="text" id="animal" placeholder="Favorite Animal"><br/>
 <button id="addPerson">Add Person</button>
 <p/>
@@ -24,9 +23,9 @@ function idbOK() {
 $(document).ready(function() {
 	if(!idbOK()) return;
 
-	var dbPromise = idb.open('test-db7', 4, function(upgradeDb) {
+	var dbPromise = idb.open('test-db7', 3, function(upgradeDb) {
 	  switch(upgradeDb.oldVersion) {
-	    case 0:
+	  	case 0:
 	      upgradeDb.createObjectStore('people', { keyPath: "email" });
 	    case 1:
 	      var peopleStore = upgradeDb.transaction.objectStore('people');
@@ -34,9 +33,6 @@ $(document).ready(function() {
 			case 2:
 				var peopleStore = upgradeDb.transaction.objectStore('people');
 				peopleStore.createIndex('animal', 'favoriteAnimal');
-			case 3:
-				peopleStore = upgradeDb.transaction.objectStore('people');
-				peopleStore.createIndex('age', 'age');
 	  }
 	});
 
@@ -46,7 +42,6 @@ $(document).ready(function() {
 function addPerson() {
 	var name = $("#name").val();
 	var email = $("#email").val();
-	var age = $("#age").val();
 	var animal = $("#animal").val();
 	console.log("About to add "+name+"/"+email);
 
@@ -56,8 +51,7 @@ function addPerson() {
 		var person = {
 			name:name,
 			email:email,
-			age:age,
-			favoriteAnimal:animal
+			favoriteAnimal:animal,
 			created:new Date().getTime()
 		}
 		store.add(person);
